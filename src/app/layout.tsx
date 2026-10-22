@@ -38,7 +38,7 @@ export default function RootLayout({
       lang="en"
       className={`${fraunces.variable} ${geist.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[var(--color-paper)] text-[var(--color-ink)]">
+      <body className="min-h-full flex flex-col bg-[var(--color-paper)] text-[var(--color-ink)]" suppressHydrationWarning>
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
