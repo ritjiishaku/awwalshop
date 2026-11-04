@@ -1,0 +1,349 @@
+// =============================================================================
+// AWWALSHOP — Prisma Schema
+// =============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================================================
+// ENUMS
+// =============================================================================
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum ProductAvailability {
+  AVAILABLE
+  OUT_OF_STOCK
+  MADE_TO_ORDER
+  COMING_SOON
+  DISCONTINUED
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum MediaSourceType {
+  UPLOAD
+  EXTERNAL_URL
+  YOUTUBE
+  VIMEO
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+}
+
+// =============================================================================
+// ADMIN USER
+// =============================================================================
+
+model AdminUser {
+  id           String          @id @default(cuid())
+  name         String
+  email        String          @unique
+  passwordHash String
+  role         AdminRole       @default(ADMIN)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  activities   AdminActivity[]
+
+  @@map("admin_users")
+}
+
+// =============================================================================
+// CATEGORY
+// =============================================================================
+
+model Category {
+  id          String     @id @default(cuid())
+  name        String
+  slug        String     @unique
+  description String?
+  imageUrl    String?
+  parentId    String?
+  parent      Category?  @relation("CategoryParent", fields: [parentId], references: [id], onDelete: SetNull)
+  children    Category[] @relation("CategoryParent")
+  products    Product[]
+  sortOrder   Int        @default(0)
+  isVisible   Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([slug])
+  @@index([parentId])
+  @@map("categories")
+}
+
+// =============================================================================
+// COLLECTION
+// =============================================================================
+
+model Collection {
+  id          String              @id @default(cuid())
+  name        String
+  slug        String              @unique
+  description String?
+  bannerUrl   String?
+  isVisible   Boolean             @default(true)
+  sortOrder   Int                 @default(0)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  products    CollectionProduct[]
+
+  @@index([slug])
+  @@map("collections")
+}
+
+// =============================================================================
+// PRODUCT
+// =============================================================================
+
+model Product {
+  id               String              @id @default(cuid())
+  name             String
+  slug             String              @unique
+  shortDescription String?
+  fullDescription  String?
+  sku              String?             @unique
+  categoryId       String?
+  category         Category?           @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  regularPrice     Decimal             @default(0) @db.Decimal(12, 2)
+  discountPrice    Decimal?            @db.Decimal(12, 2)
+  currency         String              @default("NGN")
+  showPrice        Boolean             @default(true)
+  material         String?
+  colour           String?
+  size             String?
+  weight           String?
+  processingTime   String?
+  deliveryInfo     String?
+  customAttributes Json?
+  status           ProductStatus       @default(DRAFT)
+  availability     ProductAvailability @default(AVAILABLE)
+  isFeatured       Boolean             @default(false)
+  isNewArrival     Boolean             @default(false)
+  seoTitle         String?
+  seoDescription   String?
+  seoImage         String?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  media            ProductMedia[]
+  variants         ProductVariant[]
+  collections      CollectionProduct[]
+
+  @@index([slug])
+  @@index([status])
+  @@index([categoryId])
+  @@index([isFeatured])
+  @@index([isNewArrival])
+  @@map("products")
+}
+
+// =============================================================================
+// PRODUCT MEDIA
+// =============================================================================
+
+model ProductMedia {
+  id           String          @id @default(cuid())
+  productId    String
+  product      Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  mediaType    MediaType       @default(IMAGE)
+  sourceType   MediaSourceType @default(UPLOAD)
+  url          String
+  thumbnailUrl String?
+  altText      String?
+  caption      String?
+  sortOrder    Int             @default(0)
+  isPrimary    Boolean         @default(false)
+  publicId     String?
+  createdAt    DateTime        @default(now())
+
+  @@index([productId])
+  @@map("product_media")
+}
+
+// =============================================================================
+// PRODUCT VARIANT
+// =============================================================================
+
+model ProductVariant {
+  id            String              @id @default(cuid())
+  productId     String
+  product       Product             @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name          String
+  value         String
+  priceModifier Decimal             @default(0) @db.Decimal(12, 2)
+  availability  ProductAvailability @default(AVAILABLE)
+  sortOrder     Int                 @default(0)
+
+  @@index([productId])
+  @@map("product_variants")
+}
+
+// =============================================================================
+// COLLECTION PRODUCT (Junction)
+// =============================================================================
+
+model CollectionProduct {
+  collectionId String
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  productId    String
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sortOrder    Int        @default(0)
+
+  @@id([collectionId, productId])
+  @@index([collectionId])
+  @@index([productId])
+  @@map("collection_products")
+}
+
+// =============================================================================
+// WEBSITE CONTENT (CMS homepage sections)
+// =============================================================================
+
+model WebsiteContent {
+  id        String   @id @default(cuid())
+  section   String
+  key       String
+  value     String?  @db.Text
+  type      String   @default("text")
+  updatedAt DateTime @updatedAt
+
+  @@unique([section, key])
+  @@index([section])
+  @@map("website_content")
+}
+
+// =============================================================================
+// TESTIMONIAL
+// =============================================================================
+
+model Testimonial {
+  id              String   @id @default(cuid())
+  customerName    String
+  testimonialText String   @db.Text
+  imageUrl        String?
+  rating          Int      @default(5)
+  isPublished     Boolean  @default(false)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("testimonials")
+}
+
+// =============================================================================
+// BUSINESS SETTINGS
+// =============================================================================
+
+model BusinessSettings {
+  id              String   @id @default(cuid())
+  businessName    String   @default("AWWALSHOP")
+  logoUrl         String?
+  altLogoUrl      String?
+  faviconUrl      String?
+  tagline         String   @default("Elegance in Every Detail.")
+  whatsappNumber  String   @default("+2348000000000")
+  whatsappMessage String   @default("Hello Awwalshop,\n\nI am interested in ordering:\n\nProduct: {productName}\nPrice: {price}\n{variants}Quantity: {quantity}\nProduct link: {productUrl}\n\nPlease provide more information about availability and delivery.")
+  contactPhone    String?
+  email           String?
+  address         String?
+  currency        String   @default("NGN")
+  currencySymbol  String   @default("₦")
+  socialLinks     Json     @default("{}")
+  deliveryInfo    String?
+  processingInfo  String?
+  openingHours    Json     @default("{}")
+  seoTitle        String?
+  seoDescription  String?
+  seoImage        String?
+  updatedAt       DateTime @updatedAt
+
+  @@map("business_settings")
+}
+
+// =============================================================================
+// FAQ
+// =============================================================================
+
+model Faq {
+  id          String   @id @default(cuid())
+  question    String
+  answer      String   @db.Text
+  isPublished Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("faqs")
+}
+
+// =============================================================================
+// NAVIGATION ITEM
+// =============================================================================
+
+model NavigationItem {
+  id           String           @id @default(cuid())
+  label        String
+  href         String
+  parentId     String?
+  parent       NavigationItem?  @relation("NavParent", fields: [parentId], references: [id], onDelete: SetNull)
+  children     NavigationItem[] @relation("NavParent")
+  sortOrder    Int              @default(0)
+  isVisible    Boolean          @default(true)
+  openInNewTab Boolean          @default(false)
+  createdAt    DateTime         @default(now())
+
+  @@index([parentId])
+  @@map("navigation_items")
+}
+
+// =============================================================================
+// PROMOTIONAL BANNER
+// =============================================================================
+
+model PromotionalBanner {
+  id          String   @id @default(cuid())
+  imageUrl    String?
+  heading     String?
+  description String?
+  ctaText     String?
+  ctaUrl      String?
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("promotional_banners")
+}
+
+// =============================================================================
+// ADMIN ACTIVITY LOG
+// =============================================================================
+
+model AdminActivity {
+  id          String    @id @default(cuid())
+  adminId     String
+  admin       AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  action      String
+  entityType  String
+  entityId    String?
+  description String?
+  createdAt   DateTime  @default(now())
+
+  @@index([adminId])
+  @@index([createdAt])
+  @@map("admin_activities")
+}

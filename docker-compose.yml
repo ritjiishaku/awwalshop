@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: awwalshop-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: awwalshop
+      POSTGRES_PASSWORD: awwalshop_dev_password
+      POSTGRES_DB: awwalshop
+    ports:
+      - "5434:5432"
+    volumes:
+      - awwalshop_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U awwalshop -d awwalshop"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  awwalshop_pg_data:
+    name: awwalshop_pg_data

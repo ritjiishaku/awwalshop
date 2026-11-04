@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- AWWALSHOP — Primary Horizontal Logo (Light on Dark) -->
+<svg width="240" height="48" viewBox="0 0 240 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AWWALSHOP">
+  <!-- Decorative A symbol -->
+  <g>
+    <path d="M12 36L20 12L28 36" stroke="#F8F5EF" stroke-width="1.5" stroke-linecap="square" fill="none"/>
+    <path d="M14.5 28H25.5" stroke="#C5A46D" stroke-width="1" stroke-linecap="square"/>
+  </g>
+  <!-- AWWALSHOP wordmark -->
+  <text x="38" y="30" font-family="'Cormorant Garamond', Georgia, serif" font-size="20" font-weight="600" letter-spacing="4" fill="#F8F5EF">AWWALSHOP</text>
+  <!-- Gold accent line -->
+  <line x1="38" y1="35" x2="230" y2="35" stroke="#C5A46D" stroke-width="0.5" opacity="0.6"/>
+</svg>
+

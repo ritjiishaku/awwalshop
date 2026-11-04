@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- AWWALSHOP — Brand Symbol / Monogram -->
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AWWALSHOP A symbol">
+  <!-- Outer square frame -->
+  <rect x="1" y="1" width="46" height="46" stroke="#241C19" stroke-width="1" fill="none"/>
+  <!-- A letterform -->
+  <path d="M24 10L36 38" stroke="#241C19" stroke-width="2" stroke-linecap="square" fill="none"/>
+  <path d="M24 10L12 38" stroke="#241C19" stroke-width="2" stroke-linecap="square" fill="none"/>
+  <!-- Crossbar in gold -->
+  <path d="M16 28H32" stroke="#C5A46D" stroke-width="1.5" stroke-linecap="square"/>
+</svg>
+
