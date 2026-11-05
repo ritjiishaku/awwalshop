@@ -9,7 +9,7 @@ categories and the business details used for customer inquiries.
 
 - **Next.js 16** (App Router, Server Components, Server Actions, `proxy.ts`)
 - **TypeScript** + **Tailwind CSS v4**
-- **PostgreSQL 16** via **Prisma 6**
+- **PostgreSQL (Supabase)** via **Prisma 6**
 - **NextAuth v5** (credentials + JWT sessions)
 - **Cloudinary** (optional media uploads)
 - **Zod** + **React Hook Form**
@@ -17,7 +17,7 @@ categories and the business details used for customer inquiries.
 ## Prerequisites
 
 - Node.js **20.9+** (Node 22/24 recommended)
-- Docker Desktop (for the local PostgreSQL instance)
+- A Supabase project (or Docker Desktop if you prefer a local database)
 
 ## Local setup
 
@@ -29,8 +29,7 @@ npm install
 copy .env.example .env        # Windows
 # cp .env.example .env        # macOS / Linux
 
-# 3. Start PostgreSQL on port 5434
-npm run db:up
+# 3. Add your Supabase connection strings to .env (see Environment below)
 
 # 4. Create the schema and load the demo catalogue
 npm run db:push
@@ -53,11 +52,19 @@ Admin sign-in asks for a password only. The account is selected using
 ### Environment
 
 `.env` is ignored by Git. Start from `.env.example` and keep it in sync when
-you add configuration. The local database URL matches `docker-compose.yml`:
+you add configuration. The app uses Supabase Postgres: the transaction pooler
+for queries and the session pooler for migrations.
 
 ```env
-DATABASE_URL="postgresql://awwalshop:awwalshop_dev_password@localhost:5434/awwalshop?schema=public"
+DATABASE_URL="postgresql://postgres.<project-ref>:<password>@aws-0-<region>.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1&sslmode=require"
+DIRECT_URL="postgresql://postgres.<project-ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres?sslmode=require"
 ```
+
+Get both from **Supabase Dashboard → Project Settings → Database → Connection
+string → URI**. If your network blocks outbound ports `5432`/`6543`, use a VPN
+or mobile hotspot. For offline development, `docker-compose.yml` still provides
+a local PostgreSQL instance on port `5434` (`npm run db:up`); point both URLs at
+`localhost:5434` in that case.
 
 Cloudinary is optional locally. Image uploads return a clear configuration
 error until `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` and
@@ -109,8 +116,9 @@ proxy.ts              Admin route protection (Next.js 16 proxy convention)
 
 - Run `prisma migrate deploy` (after creating migrations) or `npm run db:push`
   against the production database before the first build.
-- Set `DATABASE_URL`, `AUTH_SECRET`, `NEXTAUTH_URL`, `NEXT_PUBLIC_SITE_URL` and
-  the Cloudinary credentials in the hosting environment.
+- Set `DATABASE_URL`, `DIRECT_URL`, `AUTH_SECRET`, `NEXTAUTH_URL`,
+  `NEXT_PUBLIC_SITE_URL` and the Cloudinary credentials in the hosting
+  environment. Use the Supabase pooled URLs shown above.
 - The build does **not** modify the database; schema changes are explicit via
   the `db:*` scripts.
 - `NEXT_PUBLIC_SITE_URL` must be the final public origin so canonical URLs,
@@ -118,8 +126,12 @@ proxy.ts              Admin route protection (Next.js 16 proxy convention)
 
 ## Troubleshooting
 
-- **`Can't reach database server`** — make sure Docker Desktop is running and
-  `npm run db:up` reports the container as healthy. The host port is `5434`.
+- **`Can't reach database server` (Supabase)** — your network may block outbound
+  ports `5432`/`6543`. Try a VPN or mobile hotspot. For offline work, switch to
+  the Docker URLs and run `npm run db:up`.
+- **`Can't reach database server` (Docker)** — make sure Docker Desktop is
+  running and `npm run db:up` reports the container as healthy. The host port
+  is `5434`.
 - **`Port 5434 is already allocated`** — another PostgreSQL container is using
   it. Stop it with `docker ps` / `docker stop <name>`, then run `npm run db:up`.
 - **`Prisma Client is not generated`** — run `npm run db:generate`, or simply

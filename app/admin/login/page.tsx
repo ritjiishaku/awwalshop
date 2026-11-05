@@ -7,7 +7,6 @@ import { Eye, EyeOff, KeyRound, ShieldCheck } from 'lucide-react'
 import Logo from '@/components/brand/Logo'
 
 export default function AdminLoginPage() {
-  const [email] = useState('admin@awwalshop.com')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -19,17 +18,15 @@ export default function AdminLoginPage() {
     setError('')
     setLoading(true)
     try {
-      const res = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+      const res = await signIn('credentials', {
+        password,
+        redirect: false,
       })
-      const data = await res.json()
-      if (res.ok && data.ok) {
+      if (res?.error) {
+        setError('Invalid password')
+      } else {
         router.push('/admin')
         router.refresh()
-      } else {
-        setError(data.error || 'Invalid credentials')
       }
     } catch (err) {
       console.error('Login request failed', err)
