@@ -51,6 +51,10 @@ Admin sign-in asks for a password only. The account is selected using
 `ADMIN_PASSWORD` is authoritative: if it changes, sign in with the new value
 and the stored hash is refreshed automatically.
 
+A successful sign-in returns you to the admin page you originally requested.
+The session stays active for seven days so routine catalogue edits do not ask
+for a password each day; signing out ends it immediately.
+
 If you only need to reset the password (without touching catalogue data), run
 `npm run admin:password` after setting `ADMIN_PASSWORD`. Both `db:seed` and this
 command use Next.js env precedence, so `.env.local` overrides `.env` locally.
@@ -124,8 +128,12 @@ proxy.ts              Admin route protection (Next.js 16 proxy convention)
 - Run `prisma migrate deploy` (after creating migrations) or `npm run db:push`
   against the production database before the first build.
 - Set `DATABASE_URL`, `DIRECT_URL`, `AUTH_SECRET`, `NEXTAUTH_URL`,
-  `NEXT_PUBLIC_SITE_URL` and the Cloudinary credentials in the hosting
-  environment. Use the Supabase pooled URLs shown above.
+  `NEXT_PUBLIC_SITE_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` and the Cloudinary
+  credentials in the hosting environment. Use the Supabase pooled URLs shown
+  above. `ADMIN_PASSWORD` must be the password you want the admin to use; the
+  value in `.env.example` is only a sample. Deployments made before the
+  password-only sign-in fix ignore this variable, so redeploy the current code
+  and then reset the stored hash with `npm run admin:password` if necessary.
 - The build does **not** modify the database; schema changes are explicit via
   the `db:*` scripts.
 - `NEXT_PUBLIC_SITE_URL` must be the final public origin so canonical URLs,

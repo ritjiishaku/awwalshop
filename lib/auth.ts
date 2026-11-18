@@ -113,7 +113,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   session: {
     strategy: 'jwt',
-    maxAge: 24 * 60 * 60,
+    // Keep the admin signed in for a week so routine catalogue edits do not
+    // require a password every day. Sign out still ends the session immediately.
+    maxAge: 7 * 24 * 60 * 60,
   },
 
   callbacks: {

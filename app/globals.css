@@ -1613,7 +1613,25 @@ details[open] .footer-accordion-indicator::before {
   color: var(--aw-gold-dark);
 }
 
+.aw-auth-pass-toggle:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.aw-auth-caps {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: -6px 0 0;
+  color: #9a6a19;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
 .aw-auth-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: -2px 0 0;
   border: 1px solid rgba(192, 57, 43, 0.18);
   border-radius: 8px;
@@ -1624,7 +1642,38 @@ details[open] .footer-accordion-indicator::before {
   line-height: 1.5;
 }
 
+.aw-auth-success {
+  margin: -2px 0 0;
+  border: 1px solid rgba(39, 122, 59, 0.2);
+  border-radius: 8px;
+  background: rgba(39, 122, 59, 0.07);
+  padding: 10px 12px;
+  color: #247a3b;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.aw-auth-spinner {
+  animation: aw-auth-spin 0.8s linear infinite;
+}
+
+@keyframes aw-auth-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aw-auth-spinner {
+    animation: none;
+  }
+}
+
 .aw-auth-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
   min-height: 50px;
   margin-top: 6px;
