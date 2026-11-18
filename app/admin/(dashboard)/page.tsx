@@ -101,7 +101,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)]">
-        <section className="surface overflow-hidden">
+        <section className="surface aw-admin-card overflow-hidden">
           <div className="surface-header">
             <div>
               <h2 className="font-heading text-xl text-espresso">Recently updated</h2>
@@ -170,8 +170,8 @@ export default async function AdminDashboardPage() {
                       <span
                         className={`status-pill mt-1 ${
                           product.status === 'PUBLISHED'
-                            ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
-                            : 'border-line bg-[#faf7f1] text-taupe'
+                            ? 'aw-admin-status-live'
+                            : 'aw-admin-status-draft'
                         }`}
                       >
                         {product.status === 'PUBLISHED' ? 'Live' : 'Draft'}
@@ -185,7 +185,7 @@ export default async function AdminDashboardPage() {
         </section>
 
         <div className="flex flex-col gap-5">
-          <section className="relative overflow-hidden rounded-2xl bg-espresso p-5 text-ivory shadow-soft">
+          <section className="aw-admin-health-card relative overflow-hidden rounded-2xl bg-espresso p-5 text-ivory shadow-soft">
             <div
               aria-hidden
               className="pointer-events-none absolute -right-10 -top-16 h-44 w-44 rounded-full bg-[radial-gradient(circle,rgba(197,164,109,0.28),transparent_70%)]"
@@ -233,13 +233,13 @@ export default async function AdminDashboardPage() {
             </div>
           </section>
 
-          <section className="surface overflow-hidden">
+          <section className="surface aw-admin-card overflow-hidden">
             <div className="surface-header">
               <div>
                 <h2 className="font-heading text-xl text-espresso">Recent activity</h2>
                 <p className="mt-0.5 text-[11px] text-taupe">Audit trail of admin changes.</p>
               </div>
-              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-line bg-[#faf7f1] text-[#a7823d]">
+              <span className="aw-admin-activity-icon">
                 <Activity size={14} />
               </span>
             </div>
@@ -251,7 +251,7 @@ export default async function AdminDashboardPage() {
               <ul className="divide-y divide-line">
                 {recentActivity.map((activity) => (
                   <li key={activity.id} className="flex items-start gap-3 px-5 py-3">
-                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line bg-[#faf7f1] text-[#a7823d]">
+                    <span className="aw-admin-activity-icon aw-admin-activity-icon-sm">
                       <Activity size={11} />
                     </span>
                     <div className="min-w-0 flex-1">

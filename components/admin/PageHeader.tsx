@@ -14,24 +14,13 @@ export default function PageHeader({
   actions,
 }: PageHeaderProps) {
   return (
-    <div className="mb-7 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-      <div className="max-w-2xl">
-        {eyebrow && (
-          <p className="mb-2 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#a7823d]">
-            <span className="h-px w-6 bg-gold" />
-            {eyebrow}
-          </p>
-        )}
-        <h1 className="font-heading text-3xl leading-tight text-espresso sm:text-[2.6rem]">
-          {title}
-        </h1>
-        {description && (
-          <p className="mt-2 text-[13px] leading-relaxed text-[#777068]">
-            {description}
-          </p>
-        )}
+    <div className="aw-admin-page-header">
+      <div className="aw-admin-page-header-copy">
+        {eyebrow && <p className="aw-admin-eyebrow">{eyebrow}</p>}
+        <h1 className="aw-admin-title">{title}</h1>
+        {description && <p className="aw-admin-description">{description}</p>}
       </div>
-      {actions && <div className="flex flex-wrap items-center gap-2.5">{actions}</div>}
+      {actions && <div className="aw-admin-actions">{actions}</div>}
     </div>
   )
 }

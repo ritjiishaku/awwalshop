@@ -28,16 +28,12 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden border-b border-line bg-[linear-gradient(180deg,#faf8f5_0%,#fff_100%)]">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(197,164,109,0.18),transparent_60%)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_82%_8%,rgba(197,164,109,0.22),transparent_52%),radial-gradient(ellipse_at_12%_82%,rgba(197,164,109,0.12),transparent_55%)]"
         />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -bottom-32 left-1/2 h-80 w-[36rem] -translate-x-1/2 rounded-full bg-white/40 blur-3xl"
-        />
-        <div className="container-brand relative py-16 sm:py-24 lg:py-32">
+        <div className="container-brand relative py-12 sm:py-16 lg:py-20">
           <div className="mx-auto max-w-4xl text-center">
             <p className="eyebrow mx-auto">
               <span className="h-px w-6 bg-gold" />
@@ -46,12 +42,12 @@ export default async function HomePage() {
             <h1 className="mt-6 font-heading text-4xl leading-[1.02] text-espresso sm:text-6xl lg:text-7xl">
               Elegance in Every Detail
             </h1>
-            <p className="mt-6 mx-auto max-w-2xl text-base leading-relaxed text-taupe sm:text-lg">
-              Curated jewellery, fine timepieces and bespoke traditional attire — crafted for those who understand that true luxury lives in the details.
+            <p className="mt-5 mx-auto max-w-2xl text-sm leading-relaxed text-taupe sm:text-base">
+              Curated jewellery, fine timepieces and bespoke traditional attire — thoughtfully selected for gifts, celebrations and everyday elegance.
             </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link href="/shop" className="btn btn-primary">
-                Explore the Collection
+                Explore the Catalogue
                 <ArrowRight size={16} />
               </Link>
               <a
@@ -64,6 +60,58 @@ export default async function HomePage() {
               </a>
             </div>
           </div>
+
+          {categories.length > 0 && (
+            <div className="mt-10 grid grid-cols-2 gap-2.5 sm:mt-12 sm:gap-4 lg:grid-cols-4">
+              {categories.slice(0, 4).map((category, index) => (
+                <Link
+                  key={category.slug}
+                  href={`/shop?category=${category.slug}`}
+                  className="group overflow-hidden rounded-xl border border-line bg-white text-left shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-gold/70 hover:shadow-card-hover"
+                >
+                  <div className="relative aspect-[1.35/1] overflow-hidden bg-sand/50">
+                    {category.imageUrl ? (
+                      <img
+                        src={category.imageUrl}
+                        alt=""
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div
+                        className={`flex h-full items-end p-3 ${
+                          index % 4 === 0
+                            ? 'bg-[linear-gradient(145deg,#ede5d8,#c5a36c)]'
+                            : index % 4 === 1
+                              ? 'bg-[linear-gradient(145deg,#5e665b,#b69a66)]'
+                              : index % 4 === 2
+                                ? 'bg-[linear-gradient(145deg,#303d39,#9c8055)]'
+                                : 'bg-[linear-gradient(145deg,#d8c6a9,#a5795c)]'
+                        }`}
+                      >
+                        <span className="font-heading text-4xl font-semibold text-white/75">
+                          0{index + 1}
+                        </span>
+                      </div>
+                    )}
+                    <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-espresso/45 to-transparent" />
+                  </div>
+                  <div className="p-3 sm:p-4">
+                    <h2 className="font-heading text-base leading-tight text-espresso sm:text-xl">
+                      {category.name}
+                    </h2>
+                    <div className="mt-2 flex items-center justify-between border-t border-gold/30 pt-2">
+                      <span className="text-[9px] font-semibold uppercase tracking-[0.12em] text-taupe">
+                        {category.count} {category.count === 1 ? 'piece' : 'pieces'}
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-[#7a623a]">
+                        View <ArrowRight size={12} className="transition-transform group-hover:translate-x-1" />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

@@ -87,14 +87,14 @@ export default function Header({
           </button>
           <div className="sm:hidden">
             <Logo
-              href="/shop"
+              href="/"
               variant="dark"
               compact
               showTagline={false}
             />
           </div>
           <div className="hidden sm:block">
-            <Logo href="/shop" variant="dark" showTagline={false} />
+            <Logo href="/" variant="dark" showTagline={false} />
           </div>
         </div>
 
@@ -265,7 +265,7 @@ export default function Header({
             className="animate-slide-in absolute inset-y-0 left-0 flex w-[88vw] max-w-sm flex-col bg-ivory p-6 pt-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-elevated"
           >
             <div className="mb-5 flex items-center justify-between">
-              <Logo href="/shop" variant="dark" showTagline={false} />
+              <Logo href="/" variant="dark" showTagline={false} />
               <button
                 type="button"
                 onClick={closeMenu}

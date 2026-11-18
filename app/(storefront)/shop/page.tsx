@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ChevronRight, SearchX } from 'lucide-react'
+import { ArrowRight, ChevronRight, SearchX } from 'lucide-react'
 import ProductCard from '@/components/storefront/ProductCard'
 import { CatalogueSort } from '@/components/storefront/CatalogueFilters'
 import CatalogueLayout from '@/components/storefront/CatalogueLayout'
@@ -85,7 +85,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   return (
     <>
       {/* Compact catalogue masthead */}
-      <section className="relative overflow-hidden border-b border-line">
+      <section className="relative overflow-hidden border-b border-line bg-[linear-gradient(180deg,#faf8f5_0%,#fff_100%)]">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(197,164,109,0.16),transparent_55%)]"
@@ -122,7 +122,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
               <span className="h-px w-6 bg-gold" />
               Modern African Luxury
             </p>
-            <h1 className="font-heading text-[2.25rem] leading-[1.02] text-espresso sm:mt-4 sm:text-6xl lg:text-7xl">
+            <h1 className="font-heading text-[2.25rem] leading-[1.02] text-espresso sm:mt-4 sm:text-5xl lg:text-6xl">
               {heading === 'The Catalogue' ? 'Elegance in Every Detail' : heading}
             </h1>
             {!isFilteredView && (
@@ -149,6 +149,55 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
 
           {categories.length > 0 && (
             <>
+              {!isFilteredView && (
+                <div className="mt-7 grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-4">
+                  {categories.slice(0, 4).map((category, index) => (
+                    <Link
+                      key={category.slug}
+                      href={`/shop?category=${category.slug}`}
+                      className="group overflow-hidden rounded-xl border border-line bg-white text-left shadow-soft transition-all hover:-translate-y-1 hover:border-gold/70"
+                    >
+                      <div className="relative aspect-[1.35/1] overflow-hidden bg-sand/50">
+                        {category.imageUrl ? (
+                          <img
+                            src={category.imageUrl}
+                            alt=""
+                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div
+                            className={`flex h-full items-end p-3 ${
+                              index % 4 === 0
+                                ? 'bg-[linear-gradient(145deg,#ede5d8,#c5a36c)]'
+                                : index % 4 === 1
+                                  ? 'bg-[linear-gradient(145deg,#5e665b,#b69a66)]'
+                                  : index % 4 === 2
+                                    ? 'bg-[linear-gradient(145deg,#303d39,#9c8055)]'
+                                    : 'bg-[linear-gradient(145deg,#d8c6a9,#a5795c)]'
+                            }`}
+                          >
+                            <span className="font-heading text-4xl text-white/75">
+                              0{index + 1}
+                            </span>
+                          </div>
+                        )}
+                        <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-espresso/45 to-transparent" />
+                      </div>
+                      <div className="p-3">
+                        <h2 className="font-heading text-base leading-tight text-espresso sm:text-lg">
+                          {category.name}
+                        </h2>
+                        <div className="mt-2 flex items-center justify-between border-t border-gold/30 pt-2">
+                          <span className="text-[8px] font-semibold uppercase tracking-[0.1em] text-taupe">
+                            {category.count} pieces
+                          </span>
+                          <ArrowRight size={12} className="text-[#7a623a]" />
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
               <CategoryDropdown
                 selectedCategory={params.category}
                 categories={

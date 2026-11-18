@@ -18,24 +18,19 @@ export default function AdminLayoutClient({
   children,
   user,
 }: AdminLayoutClientProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [navOpen, setNavOpen] = useState(false)
 
   return (
-    <div className="admin-shell min-h-screen text-espresso">
+    <div className="aw-admin flex min-h-screen flex-col">
+      <AdminHeader user={user} onToggleNav={() => setNavOpen((open) => !open)} />
+      <main className="aw-admin-main mx-auto w-full max-w-[1180px] flex-1 px-4 py-8 sm:px-6 sm:py-10">
+        {children}
+      </main>
       <AdminSidebar
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
+        isOpen={navOpen}
+        onClose={() => setNavOpen(false)}
         user={user}
       />
-      <div className="flex min-h-screen flex-col lg:pl-[17rem]">
-        <AdminHeader
-          onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-          user={user}
-        />
-        <main className="mx-auto w-full max-w-[1500px] flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
-          {children}
-        </main>
-      </div>
       <Toaster richColors position="top-right" />
     </div>
   )

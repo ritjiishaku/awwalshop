@@ -2,10 +2,44 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, Search, Store } from 'lucide-react'
+import { signOut } from 'next-auth/react'
+import {
+  Image as ImageIcon,
+  Layers,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Package,
+  Search,
+  Settings,
+  Sparkles,
+  Store,
+} from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+
+interface AdminNavItem {
+  label: string
+  href: string
+  icon: LucideIcon
+}
+
+const adminNavItems: AdminNavItem[] = [
+  { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { label: 'Products', href: '/admin/products', icon: Package },
+  { label: 'Categories', href: '/admin/categories', icon: Layers },
+  { label: 'Collections', href: '/admin/collections', icon: Sparkles },
+  { label: 'Media', href: '/admin/media', icon: ImageIcon },
+  { label: 'Settings', href: '/admin/settings', icon: Settings },
+]
+
+function isAdminNavActive(pathname: string, href: string) {
+  return href === '/admin'
+    ? pathname === '/admin'
+    : pathname === href || pathname.startsWith(`${href}/`)
+}
 
 interface AdminHeaderProps {
-  onToggleSidebar?: () => void
+  onToggleNav?: () => void
   user?: {
     name?: string | null
     email?: string | null
@@ -13,79 +47,87 @@ interface AdminHeaderProps {
   }
 }
 
-const sectionLabels: { prefix: string; label: string }[] = [
-  { prefix: '/admin/products', label: 'Products' },
-  { prefix: '/admin/categories', label: 'Categories' },
-  { prefix: '/admin/collections', label: 'Collections' },
-  { prefix: '/admin/media', label: 'Media library' },
-  { prefix: '/admin/settings', label: 'Business settings' },
-]
-
-export default function AdminHeader({ onToggleSidebar, user }: AdminHeaderProps) {
+export default function AdminHeader({ onToggleNav, user }: AdminHeaderProps) {
   const pathname = usePathname()
   const current =
-    sectionLabels.find((section) => pathname.startsWith(section.prefix))?.label ??
+    adminNavItems.find((item) => isAdminNavActive(pathname, item.href))?.label ??
     'Dashboard'
 
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-[#f6f2eb]/85 backdrop-blur-xl">
-      <div className="flex h-[4.5rem] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <div className="flex min-w-0 items-center gap-3">
+    <header className="aw-admin-topbar">
+      <div className="aw-admin-topbar-inner">
+        <div className="aw-admin-brand">
           <button
             type="button"
-            onClick={onToggleSidebar}
-            className="-ml-2 rounded-full p-2 text-espresso transition-colors hover:bg-white lg:hidden"
-            aria-label="Open navigation sidebar"
+            onClick={onToggleNav}
+            className="aw-admin-menu-button"
+            aria-label="Open admin navigation"
           >
             <Menu size={20} />
           </button>
-          <div className="min-w-0">
-            <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-[#a7823d]">
-              Awwalshop admin
-            </p>
-            <p className="truncate font-heading text-xl leading-tight text-espresso">
-              {current}
-            </p>
-          </div>
+          <Link href="/admin" className="aw-admin-wordmark">
+            AWWALSHOP
+            <span>Admin</span>
+          </Link>
+          <span className="aw-admin-section-label">{current}</span>
         </div>
 
-        <div className="flex items-center gap-1.5 sm:gap-2.5">
-          <form
-            action="/admin/products"
-            method="get"
-            className="relative hidden md:block"
-          >
-            <Search
-              size={15}
-              aria-hidden
-              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-taupe"
-            />
+        <div className="aw-admin-topbar-actions">
+          <form action="/admin/products" method="get" className="aw-admin-search">
+            <Search size={15} aria-hidden="true" />
             <input
               type="search"
               name="q"
               placeholder="Search products…"
               aria-label="Search products"
-              className="input h-10 w-52 rounded-full border-line bg-white/80 pl-9 text-[12px] lg:w-64"
             />
           </form>
 
           <Link
             href="/shop"
             target="_blank"
-            className="hidden items-center gap-2 rounded-full border border-line bg-white/70 px-3.5 py-2 text-[11px] font-semibold text-[#6f665f] transition-all hover:border-gold hover:text-espresso sm:inline-flex"
+            rel="noopener noreferrer"
+            className="aw-admin-storefront-link"
           >
-            <Store size={14} className="text-[#a7823d]" />
-            Storefront
+            <Store size={14} />
+            <span>Storefront</span>
           </Link>
 
           <span
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-espresso text-[11px] font-semibold uppercase text-gold"
+            className="aw-admin-avatar"
             title={user?.name || 'Administrator'}
           >
             {(user?.name || 'AD').slice(0, 2)}
           </span>
+
+          <button
+            type="button"
+            onClick={() => signOut({ redirectTo: '/admin/login' })}
+            className="aw-admin-signout"
+          >
+            <LogOut size={14} />
+            <span>Sign out</span>
+          </button>
         </div>
       </div>
+
+      <nav className="aw-admin-tabs" aria-label="Admin sections">
+        {adminNavItems.map((item) => {
+          const Icon = item.icon
+          const isActive = isAdminNavActive(pathname, item.href)
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              aria-current={isActive ? 'page' : undefined}
+              className="aw-admin-tab"
+            >
+              <Icon size={14} strokeWidth={1.9} />
+              {item.label}
+            </Link>
+          )
+        })}
+      </nav>
     </header>
   )
 }
