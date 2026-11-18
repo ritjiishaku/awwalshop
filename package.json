@@ -16,6 +16,7 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
+    "admin:password": "tsx scripts/reset-admin-password.ts",
     "db:reset": "prisma db push --force-reset && prisma db seed",
     "db:studio": "prisma studio",
     "db:up": "docker compose up -d",
@@ -41,6 +42,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@next/env": "16.4.3",
     "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/turbopack": "^4",
     "@types/bcryptjs": "^2.4.6",

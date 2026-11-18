@@ -47,7 +47,13 @@ Open:
 Admin sign-in asks for a password only. The account is selected using
 `ADMIN_EMAIL`, and its password is set with `ADMIN_PASSWORD` in your `.env`
 (`ADMIN_EMAIL` defaults to `admin@awwalshop.com`). Set a strong, unique
-`ADMIN_PASSWORD` before seeding or deploying anywhere public.
+`ADMIN_PASSWORD` before seeding or deploying anywhere public. The value in
+`ADMIN_PASSWORD` is authoritative: if it changes, sign in with the new value
+and the stored hash is refreshed automatically.
+
+If you only need to reset the password (without touching catalogue data), run
+`npm run admin:password` after setting `ADMIN_PASSWORD`. Both `db:seed` and this
+command use Next.js env precedence, so `.env.local` overrides `.env` locally.
 
 ### Environment
 
@@ -84,6 +90,7 @@ without Cloudinary.
 | `npm run db:down` | Stop the PostgreSQL container |
 | `npm run db:push` | Push the Prisma schema to the database |
 | `npm run db:seed` | Seed/update the demo catalogue and admin user |
+| `npm run admin:password` | Reset the admin password hash from `ADMIN_PASSWORD` |
 | `npm run db:reset` | Drop, recreate and reseed the database |
 | `npm run db:studio` | Open Prisma Studio |
 | `npm run db:migrate` | Create a Prisma migration (development) |

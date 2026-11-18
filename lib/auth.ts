@@ -1,7 +1,9 @@
 import 'server-only'
+import { timingSafeEqual } from 'node:crypto'
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
+import { AdminRole } from '@prisma/client'
 import { prisma } from '@/lib/db'
 import { z } from 'zod'
 
@@ -10,6 +12,35 @@ const loginSchema = z.object({
 })
 
 const adminEmail = (process.env.ADMIN_EMAIL || 'admin@awwalshop.com').toLowerCase()
+const adminName = 'Awwalshop Administrator'
+const configuredPassword = process.env.ADMIN_PASSWORD
+
+/**
+ * The environment variable is the source of truth for this single-admin
+ * catalogue. Compare in constant time so the login endpoint does not leak
+ * information about the configured password through response timings.
+ */
+function matchesConfiguredPassword(candidate: string) {
+  if (!configuredPassword) return false
+
+  const supplied = Buffer.from(candidate, 'utf8')
+  const expected = Buffer.from(configuredPassword, 'utf8')
+  return supplied.length === expected.length && timingSafeEqual(supplied, expected)
+}
+
+function sessionUser(admin: {
+  id: string
+  name: string | null
+  email: string
+  role: string
+}) {
+  return {
+    id: admin.id,
+    name: admin.name ?? adminName,
+    email: admin.email,
+    role: admin.role,
+  }
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -24,20 +55,57 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const { password } = parsed.data
 
-        const admin = await prisma.adminUser.findUnique({
-          where: { email: adminEmail },
-        })
+        let admin: {
+          id: string
+          name: string | null
+          email: string
+          role: string
+          passwordHash: string
+        } | null = null
+        let databaseAvailable = true
 
-        if (!admin) return null
+        try {
+          admin = await prisma.adminUser.findUnique({
+            where: { email: adminEmail },
+          })
+        } catch (error) {
+          databaseAvailable = false
+          console.error('[auth] Could not load the admin account:', error)
+        }
 
-        const passwordMatch = await bcrypt.compare(password, admin.passwordHash)
-        if (!passwordMatch) return null
+        if (admin) {
+          try {
+            if (await bcrypt.compare(password, admin.passwordHash)) {
+              return sessionUser(admin)
+            }
+          } catch (error) {
+            console.error('[auth] Could not verify the admin password hash:', error)
+          }
+        }
 
-        return {
-          id: admin.id,
-          name: admin.name,
-          email: admin.email,
-          role: admin.role,
+        if (!matchesConfiguredPassword(password)) return null
+
+        // A correct ADMIN_PASSWORD still grants access when the stored hash is
+        // stale (for example, after the env value changed without reseeding).
+        if (!databaseAvailable || !admin) {
+          return {
+            id: admin?.id ?? 'env-admin',
+            name: admin?.name ?? adminName,
+            email: adminEmail,
+            role: AdminRole.SUPER_ADMIN,
+          }
+        }
+
+        try {
+          const passwordHash = await bcrypt.hash(configuredPassword!, 12)
+          const synced = await prisma.adminUser.update({
+            where: { id: admin.id },
+            data: { passwordHash, role: AdminRole.SUPER_ADMIN },
+          })
+          return sessionUser(synced)
+        } catch (error) {
+          console.error('[auth] Signed in, but could not refresh the admin hash:', error)
+          return sessionUser(admin)
         }
       },
     }),

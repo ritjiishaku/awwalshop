@@ -14,9 +14,12 @@ import {
   ProductStatus,
 } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import { loadScriptEnv } from '../scripts/load-script-env'
 
-// `prisma db seed` loads `.env` before running this file, so DATABASE_URL and
-// the ADMIN_* credentials are already available here.
+// Match Next.js env precedence so seeding uses the same database as the app
+// (`.env.local` overrides `.env` during local development).
+loadScriptEnv()
+
 const prisma = new PrismaClient()
 
 const image = (id: string) =>
