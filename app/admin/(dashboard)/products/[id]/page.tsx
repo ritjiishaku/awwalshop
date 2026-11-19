@@ -77,6 +77,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
     <div>
       <PageHeader
         eyebrow="Inventory"
+        helpGuide="products"
         title={product.name}
         description={`Last updated ${product.updatedAt.toLocaleDateString('en-GB', {
           day: '2-digit',

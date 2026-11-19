@@ -75,6 +75,7 @@ export default async function AdminProductsPage({ searchParams }: ProductsPagePr
     <div>
       <PageHeader
         eyebrow="Inventory"
+        helpGuide="products"
         title="Products"
         description="Manage every piece in the catalogue — pricing, media, variants, publishing and collections."
         actions={

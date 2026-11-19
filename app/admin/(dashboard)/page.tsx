@@ -43,6 +43,7 @@ export default async function AdminDashboardPage() {
     <div>
       <PageHeader
         eyebrow="Overview"
+        helpGuide="getting-started"
         title="Your catalogue"
         description="Manage products, categories and curated collections, and see what is currently published to your storefront."
         actions={

@@ -32,6 +32,7 @@ export default async function EditCategoryPage({ params }: EditCategoryPageProps
     <div>
       <PageHeader
         eyebrow="Taxonomy"
+        helpGuide="categories"
         title={category.name}
         description={`${category._count.products} products · ${category._count.children} subcategories`}
         actions={

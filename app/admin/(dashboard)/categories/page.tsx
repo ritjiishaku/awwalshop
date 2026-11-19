@@ -36,6 +36,7 @@ export default async function AdminCategoriesPage() {
     <div>
       <PageHeader
         eyebrow="Taxonomy"
+        helpGuide="categories"
         title="Categories"
         description="Organise the catalogue into a clear hierarchy. Categories power storefront navigation and filtering."
         actions={

@@ -9,6 +9,7 @@ export default async function NewCategoryPage() {
     <div>
       <PageHeader
         eyebrow="Taxonomy"
+        helpGuide="categories"
         title="New category"
         description="Create a top-level category or nest it beneath an existing one."
       />

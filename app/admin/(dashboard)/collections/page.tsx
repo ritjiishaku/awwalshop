@@ -13,6 +13,7 @@ export default async function AdminCollectionsPage() {
     <div>
       <PageHeader
         eyebrow="Merchandising"
+        helpGuide="collections"
         title="Collections"
         description="Curated edits that group products across categories — new arrivals, signature pieces, seasonal stories."
         actions={

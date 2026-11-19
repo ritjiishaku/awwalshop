@@ -58,6 +58,7 @@ export default async function AdminSettingsPage() {
     <div>
       <PageHeader
         eyebrow="Configuration"
+        helpGuide="settings"
         title="Business Settings"
         description="Contact details, WhatsApp ordering, currency and service information used across the storefront."
       />

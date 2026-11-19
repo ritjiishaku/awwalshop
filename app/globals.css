@@ -1762,3 +1762,440 @@ details[open] .footer-accordion-indicator::before {
     font-size: 1.9rem;
   }
 }
+
+/* =============================================================================
+   ADMIN HELP CENTRE
+   ============================================================================= */
+
+.aw-admin-help-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 13px;
+  border: 1px solid var(--aw-line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--aw-gold-dark);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background var(--transition-base), border-color var(--transition-base),
+    color var(--transition-base);
+}
+
+.aw-admin-help-link:hover {
+  border-color: var(--aw-gold);
+  background: var(--aw-cream);
+  color: var(--aw-dark);
+}
+
+.aw-help-layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.aw-help-sidebar {
+  position: sticky;
+  top: 20px;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 40px);
+  overflow: hidden;
+  padding: 16px;
+}
+
+.aw-help-search-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.aw-help-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  color: var(--aw-muted);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.aw-help-search {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 34px 0 34px;
+  border: 1px solid var(--aw-line-strong, var(--aw-line));
+  border-radius: 10px;
+  background: var(--aw-cream);
+  color: var(--aw-dark);
+  font-family: inherit;
+  font-size: 0.78rem;
+  outline: none;
+}
+
+.aw-help-search:focus {
+  border-color: var(--aw-gold);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.16);
+}
+
+.aw-help-search::placeholder {
+  color: var(--aw-muted);
+}
+
+.aw-help-search::-webkit-search-cancel-button {
+  display: none;
+}
+
+.aw-help-search-clear {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--aw-muted);
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.aw-help-search-clear:hover {
+  background: rgba(26, 21, 16, 0.06);
+  color: var(--aw-dark);
+}
+
+.aw-help-list-label {
+  flex-shrink: 0;
+  margin: 14px 2px 8px;
+  color: var(--aw-muted);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.aw-help-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.aw-help-list-item {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-base), border-color var(--transition-base);
+}
+
+.aw-help-list-item:hover {
+  background: var(--aw-cream);
+}
+
+.aw-help-list-item[aria-current="page"] {
+  border-color: rgba(201, 169, 110, 0.45);
+  background: rgba(201, 169, 110, 0.1);
+}
+
+.aw-help-list-icon {
+  display: inline-flex;
+  flex: 0 0 28px;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--aw-cream);
+  color: var(--aw-gold-dark);
+}
+
+.aw-help-list-item[aria-current="page"] .aw-help-list-icon {
+  background: #fff;
+}
+
+.aw-help-list-title {
+  display: block;
+  color: var(--aw-dark);
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.aw-help-list-summary {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-top: 2px;
+  color: var(--aw-muted);
+  font-size: 0.66rem;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.aw-help-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 28px 12px;
+  color: var(--aw-muted);
+  text-align: center;
+}
+
+.aw-help-empty p {
+  font-size: 0.76rem;
+}
+
+.aw-help-empty button {
+  border: 0;
+  background: transparent;
+  color: var(--aw-gold-dark);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.aw-help-empty button:hover {
+  text-decoration: underline;
+}
+
+.aw-help-article {
+  min-width: 0;
+  padding: 28px;
+}
+
+.aw-help-article-head {
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--aw-line);
+}
+
+.aw-help-article-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: rgba(201, 169, 110, 0.16);
+  color: var(--aw-gold-dark);
+}
+
+.aw-help-category {
+  color: var(--aw-gold-dark);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.aw-help-article-title {
+  margin-top: 14px;
+  color: var(--aw-dark);
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.aw-help-article-summary {
+  max-width: 680px;
+  margin-top: 8px;
+  color: var(--aw-muted);
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+
+.aw-help-intro {
+  margin: 20px 0 0;
+  padding: 14px 16px;
+  border-left: 2px solid var(--aw-gold);
+  border-radius: 0 10px 10px 0;
+  background: var(--aw-cream);
+  color: var(--aw-dark);
+  font-size: 0.8rem;
+  line-height: 1.7;
+}
+
+.aw-help-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin: 26px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aw-help-step {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.aw-help-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 32px;
+  bottom: -22px;
+  left: 14px;
+  width: 1px;
+  background: var(--aw-line);
+}
+
+.aw-help-step-number {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  flex: 0 0 29px;
+  align-items: center;
+  justify-content: center;
+  width: 29px;
+  height: 29px;
+  border: 1px solid rgba(201, 169, 110, 0.5);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--aw-gold-dark);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.aw-help-step-title {
+  padding-top: 3px;
+  color: var(--aw-dark);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.aw-help-step-text {
+  margin-top: 7px;
+  color: var(--aw-muted);
+  font-size: 0.8rem;
+  line-height: 1.75;
+}
+
+.aw-help-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  padding-bottom: 1px;
+  border-bottom: 1px solid rgba(201, 169, 110, 0.5);
+  color: var(--aw-gold-dark);
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.aw-help-go:hover {
+  border-bottom-color: var(--aw-gold-dark);
+  color: var(--aw-dark);
+}
+
+.aw-help-tips {
+  margin-top: 28px;
+  padding: 16px 18px;
+  border: 1px solid rgba(201, 169, 110, 0.35);
+  border-radius: 12px;
+  background: rgba(201, 169, 110, 0.08);
+  color: var(--aw-gold-dark);
+}
+
+.aw-help-tips h3 {
+  color: var(--aw-dark);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.aw-help-tips ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: var(--aw-dark);
+  font-size: 0.76rem;
+  line-height: 1.7;
+}
+
+.aw-help-related {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--aw-line);
+}
+
+.aw-help-related-label {
+  color: var(--aw-muted);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.aw-help-related-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.aw-help-related-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 11px;
+  border: 1px solid var(--aw-line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--aw-dark);
+  font-family: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: background var(--transition-base), border-color var(--transition-base);
+}
+
+.aw-help-related-link:hover {
+  border-color: var(--aw-gold);
+  background: var(--aw-cream);
+}
+
+@media (max-width: 900px) {
+  .aw-help-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .aw-help-sidebar {
+    position: static;
+    max-height: none;
+  }
+
+  .aw-help-list {
+    max-height: 260px;
+  }
+}
+
+@media (max-width: 720px) {
+  .aw-help-article {
+    padding: 20px;
+  }
+
+  .aw-help-step:not(:last-child)::after {
+    bottom: -22px;
+    left: 14px;
+  }
+}

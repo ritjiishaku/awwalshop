@@ -28,6 +28,7 @@ export default async function EditCollectionPage({ params }: EditCollectionPageP
     <div>
       <PageHeader
         eyebrow="Merchandising"
+        helpGuide="collections"
         title={collection.name}
         description={`${collection._count.products} products in this collection`}
         actions={

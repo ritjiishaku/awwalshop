@@ -1,3 +1,5 @@
+import Link from 'next/link'
+import { BookOpen } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 interface PageHeaderProps {
@@ -5,6 +7,8 @@ interface PageHeaderProps {
   description?: string
   eyebrow?: string
   actions?: ReactNode
+  /** Slug of the help-centre guide linked from this page. */
+  helpGuide?: string
 }
 
 export default function PageHeader({
@@ -12,6 +16,7 @@ export default function PageHeader({
   description,
   eyebrow,
   actions,
+  helpGuide,
 }: PageHeaderProps) {
   return (
     <div className="aw-admin-page-header">
@@ -20,7 +25,20 @@ export default function PageHeader({
         <h1 className="aw-admin-title">{title}</h1>
         {description && <p className="aw-admin-description">{description}</p>}
       </div>
-      {actions && <div className="aw-admin-actions">{actions}</div>}
+      {(actions || helpGuide) && (
+        <div className="aw-admin-actions">
+          {actions}
+          {helpGuide && (
+            <Link
+              href={`/admin/help?guide=${encodeURIComponent(helpGuide)}`}
+              className="aw-admin-help-link"
+            >
+              <BookOpen size={13} />
+              How do I…?
+            </Link>
+          )}
+        </div>
+      )}
     </div>
   )
 }

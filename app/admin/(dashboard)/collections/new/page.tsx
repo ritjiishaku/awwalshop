@@ -6,6 +6,7 @@ export default function NewCollectionPage() {
     <div>
       <PageHeader
         eyebrow="Merchandising"
+        helpGuide="collections"
         title="New collection"
         description="Create a curated edit. Products can be added from the product editor."
       />

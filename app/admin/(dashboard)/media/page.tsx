@@ -15,6 +15,7 @@ export default async function AdminMediaPage() {
     <div>
       <PageHeader
         eyebrow="Assets"
+        helpGuide="media"
         title="Media Library"
         description="Every image and video attached to your catalogue. Upload new files from a product editor, then copy a URL wherever it is needed."
         actions={

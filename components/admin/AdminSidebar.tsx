@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import {
+  BookOpen,
   ExternalLink,
   Image as ImageIcon,
   Layers,
@@ -29,6 +30,7 @@ const adminNavItems: AdminNavItem[] = [
   { label: 'Collections', href: '/admin/collections', icon: Sparkles },
   { label: 'Media', href: '/admin/media', icon: ImageIcon },
   { label: 'Settings', href: '/admin/settings', icon: Settings },
+  { label: 'Help', href: '/admin/help', icon: BookOpen },
 ]
 
 function isAdminNavActive(pathname: string, href: string) {

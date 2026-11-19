@@ -9,6 +9,7 @@ export default async function NewProductPage() {
     <div>
       <PageHeader
         eyebrow="Inventory"
+        helpGuide="products"
         title="New product"
         description="Create a new catalogue piece. Save as a draft first, then publish when the details and media are ready."
       />
