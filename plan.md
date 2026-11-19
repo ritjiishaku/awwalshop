@@ -12,13 +12,16 @@
 > `PromotionalBanner` models exist in Prisma but have **no admin editors and no
 > storefront read queries yet** — tracked as the highest-priority remaining work
 > in Stage 9, not as completed Stage 7 items.
+>
+> Status checkboxes were verified against the source on 2026-11-19. Over-claimed
+> Stage 4 items were corrected; Stage 2/3 items were converted to checkboxes.
 
 ---
 
 ## 1. Executive Summary & Architecture Overview
 
 Awwalshop is built as a flexible, CMS-driven product catalogue and WhatsApp-ordering platform. Rather than a hardcoded single-niche storefront, it provides:
-1. **Public Storefront:** An editorial luxury discovery experience with instant search, category filtering, dedicated product detail pages, and direct WhatsApp order generation.
+1. **Public Storefront:** An editorial luxury discovery experience with catalogue search, category filtering, dedicated product detail pages, and direct WhatsApp order generation.
 2. **Admin CMS:** A secure administrative portal allowing non-technical business owners to manage products, categories, collections, media and business parameters. Editors for homepage content, testimonials, navigation, FAQs and banners are planned in Stage 9 — the models exist but are not wired up yet.
 
 ### Core Technology Stack
@@ -31,7 +34,7 @@ Awwalshop is built as a flexible, CMS-driven product catalogue and WhatsApp-orde
 | **Database** | PostgreSQL (Neon) | Scalable, serverless relational database with ACID compliance. |
 | **ORM** | Prisma 6 | Type-safe query building, migrations, and automated schema synchronization. |
 | **Authentication** | NextAuth v5 (Auth.js) | JWT session management with HTTP-only secure cookies and bcrypt password hashing. |
-| **Media Storage** | Cloudinary + oEmbed | Direct image/video uploads with auto-optimization, plus external YouTube & Vimeo video embedding. |
+| **Media Storage** | Supabase Storage + oEmbed | Direct image/video uploads with optional on-demand image transformations (Pro+), plus external YouTube & Vimeo video embedding. |
 | **Ordering Channel** | WhatsApp Business API / wa.me | Conversational commerce: prefilled, URL-encoded order inquiries with variants, quantity, and product URLs. |
 | **Validation** | Zod | Runtime validation for server actions, API routes, and client forms. |
 
@@ -61,67 +64,72 @@ flowchart TD
 - [x] Route protection proxy convention (`proxy.ts`).
 - [x] NextAuth v5 session management & authentication setup (`lib/auth.ts`).
 - [x] Stable Prisma 6 client generated (`prisma/schema.prisma`).
-- [x] TypeScript verification (`tsc --noEmit`) passing with 0 errors.
+- [x] TypeScript verification (`tsc --noEmit`) passing with 0 errors (re-verified 2026-11-19).
 
 ---
 
-### Stage 2: Database Connectivity & Seeding
+### Stage 2: Database Connectivity & Seeding (Completed & Verified)
 **Objective:** Connect the application to a live PostgreSQL instance (Neon) and seed the initial dataset.
 
-1. **Environment Configuration:**
-   - Configure `DATABASE_URL` in `.env.local`.
-   - Set up `AUTH_SECRET` and `NEXT_PUBLIC_SITE_URL`.
-2. **Schema Migration:**
-   - Run `npx prisma db push` or `npx prisma migrate dev` to generate tables, indexes, and relations.
-3. **Database Seeding:**
+- [x] **Environment configuration** — keys present in `.env` / `.env.local` (`.env.example` documents all).
+   - `DATABASE_URL` / `DIRECT_URL` point at the Neon PostgreSQL database.
+   - `AUTH_SECRET` and `NEXT_PUBLIC_SITE_URL` are set.
+- [x] **Schema migration** — PostgreSQL schema plus initial migration in `prisma/migrations/20261102094127_init/`.
+   - `db:push`, `db:migrate` and `db:generate` scripts are in `package.json`.
+- [x] **Database seeding** — `prisma/seed.ts` runs via `npm run db:seed`.
    - Execute `npx prisma db seed` to insert:
      - 5 Core Categories (Fine Jewellery, Traditional Attire, Timepieces, Leather Footwear, Accessories).
      - 3 Featured Collections (New Arrivals, Signature Luxury, Best Sellers).
      - Initial luxury demonstration products with pricing and specifications.
      - Default Business Settings and WhatsApp message template.
-4. **Initial Admin Account:**
-   - Seed the initial admin user with bcrypt-hashed credentials.
+- [x] **Initial admin account** — seeded by `seedAdmin()`.
+   - Creates a `SUPER_ADMIN` from `ADMIN_EMAIL` / `ADMIN_PASSWORD` with a bcrypt hash (12 rounds).
 
 ---
 
-### Stage 3: Core Admin CMS & Product Management
+### Stage 3: Core Admin CMS & Product Management (Completed & Verified)
 **Objective:** Provide full inventory and taxonomy control for the store administrator.
 
-1. **Product CRUD Operations:**
-   - Server Actions for product creation, editing, publishing/unpublishing, and deletion.
+- [x] **Product CRUD operations:**
+   - Server Actions for create/edit/publish/unpublish/delete/duplicate/feature in `lib/actions/products.ts`; all call `requireAdmin()` and `logAdminActivity()`.
    - Dynamic product edit view at `/admin/products/[id]`.
    - Product duplication support.
-2. **Category & Taxonomy Management:**
+- [x] **Category & taxonomy management:**
    - Support parent and child category relationships.
-   - Category banners, descriptions, and sort orders at `/admin/categories`.
-3. **Collection Management:**
+   - Category banner image, descriptions and sort orders at `/admin/categories` (stored as `Category.imageUrl`; no separate `bannerUrl`).
+- [x] **Collection management:**
    - Curated collections management at `/admin/collections`.
-4. **Admin Activity Logging:**
-   - Audit trail tracking modifications across products and settings.
+- [x] **Admin activity logging:**
+   - `logAdminActivity()` records product/category/collection/settings changes; recent entries appear on `/admin` (no standalone audit page).
 
 ---
 
-### Stage 4: Storefront Experience & Catalogue Refinement (Completed & Verified)
+### Stage 4: Storefront Experience & Catalogue Refinement (Partially complete)
 **Objective:** Deliver an editorial customer journey on mobile and desktop.
 
 1. **Catalogue Filtering & Search:**
-   - [x] Multi-criteria filtering: Category, Subcategory, Collection, Price range, Availability.
-   - [x] Instant search across product titles, descriptions, SKUs and materials.
+   - [x] Multi-criteria filtering: category (including children), price range, availability.
+   - [ ] Collection filtering — `getCatalogue()` has no `collection` param; `/collections` redirects to `/shop`.
+   - [x] Search across product titles, descriptions, SKUs and materials via `/shop?q=` (submit-based).
+   - [ ] Debounced as-you-type instant results — the header search is a plain GET form.
    - [x] Sorting by Newest, Price (Low to High / High to Low), and Featured status.
 2. **Pagination & Load-More:**
-   - [x] Offset pagination with preserved query parameters.
+   - [x] Offset pagination (12 per page) with preserved query parameters.
+   - [ ] Load-more / infinite scroll (not implemented).
 3. **Dedicated Product Detail Pages (`/products/[slug]`):**
    - [x] Rich media gallery, specifications list, variant pickers, and availability indicator.
-   - [x] Homepage, collections index/detail, about and contact pages built on live CMS/DB data.
+   - [x] Homepage, `/shop` and `/products/[slug]` are built on live database catalogue data.
+   - [ ] `/collections`, `/about` and `/contact` are legacy redirects to `/shop`, not DB-backed pages.
+   - [ ] Homepage hero / brand-story copy is hardcoded; CMS wiring is tracked in Stages 7/9.
    - [x] Responsive layouts for mobile, tablet and desktop viewports.
 
 ---
 
 ### Stage 5: Product Media System (Uploads & External Video)
-**Objective:** Coexistence of Cloudinary direct uploads, external image links, and video players.
+**Objective:** Coexistence of Supabase Storage direct uploads, external image links, and video players.
 
 1. **Direct Upload System:**
-   - [x] Cloudinary helper (`lib/cloudinary.ts`) with `fetch_format: 'auto'` optimisation.
+   - [x] Supabase Storage helper (`lib/supabase-storage.ts`) with optional on-demand image thumbnails.
    - [x] Server-side upload route (`app/api/admin/media/upload/route.ts`) with MIME allow-list and 10 MB image / 100 MB video size limits.
    - [x] Drag-and-drop uploader (`components/admin/MediaUploader.tsx`) with progress and status feedback.
    - [ ] Upload-queue thumbnail previews — currently filename + progress bar only.
@@ -143,7 +151,7 @@ flowchart TD
    - [x] Cross-platform support (`wa.me` redirecting seamlessly to WhatsApp Mobile App or WhatsApp Web).
    - [x] Template read from CMS `BusinessSettings.whatsappMessage` with live price/quantity recalculation.
 2. **Dynamic Social Metadata (Open Graph & Twitter Cards):**
-   - [x] `generateMetadata` implementation on product and collection detail pages.
+   - [x] `generateMetadata` on product detail pages and root layout (collection routes currently redirect to `/shop`).
    - [x] Auto-generated `sitemap.xml` and `robots.txt`.
    - [x] Product JSON-LD structured data.
 3. **Share Features:**
@@ -184,8 +192,9 @@ flowchart TD
 **Objective:** Verify security, accessibility, Core Web Vitals, and prepare for production launch.
 
 1. **Security Hardening:**
-   - [x] Server-side session verification on all mutating Server Actions (`requireAdmin()`) and on the upload API route.
-   - [x] Upload MIME allow-list and size limits; Zod validation on all action inputs.
+   - [x] Server-side session verification on all mutating Server Actions (`requireAdmin()`) and on the upload API route (`auth()` + 401).
+   - [x] Upload MIME allow-list and size limits; Zod validation on create/update action payloads.
+   - [ ] Zod validation for ID-only mutating actions (`delete*`, `toggle*`, `duplicateProduct`) — bare string IDs are not parsed.
    - [ ] Rate limiting on `/admin/login` (no 429/throttle logic exists yet).
    - [ ] Documented input-sanitization policy beyond Zod (e.g. rich-text and URL fields).
 2. **Mobile & Accessibility Testing:**
@@ -194,6 +203,10 @@ flowchart TD
 3. **Production Deployment (Vercel):**
    - [x] Repository linked to Vercel (`.vercel/project.json`).
    - [ ] Recorded production deployment and zero-downtime verification.
+4. **Automated checks (re-verified 2026-11-19):**
+   - [x] `npx tsc --noEmit` — 0 errors.
+   - [ ] `npm run lint` — 179 errors / 5,107 warnings overall (mostly untracked `Gifts By VF/` + `.vercel` output); main app has 1 error (`components/admin/HelpCentre.tsx:49`, `react-hooks/set-state-in-effect`).
+   - [ ] No automated test suite exists (`package.json` has no `test` script).
 
 ---
 
@@ -211,6 +224,7 @@ flowchart TD
 3. **Security & QA:**
    - [ ] Login rate limiting, documented sanitization policy, and a recorded full accessibility audit.
    - [ ] Record the production deployment / zero-downtime check.
+   - [ ] Fix the main-app lint error in `HelpCentre.tsx` and get `npm run lint` green (Stage 8.4).
 4. **Gifts by VF feature parity (reference project `Gifts By VF/`):**
    - [ ] Sales rep portal and referral links (`RepPortal.jsx`).
    - [ ] AI concierge chat widget ("Ask Gifts by VF") — currently only a WhatsApp link.
@@ -225,7 +239,29 @@ flowchart TD
    - [ ] Optional phase 2: a “Getting started” checklist card on the dashboard with progress in `localStorage` — deliberately deferred because docs-with-deep-links stay useful as the UI changes.
 6. **Plan hygiene:**
    - [x] Corrected stale Stage 5/7/8 checkboxes to match the implemented code.
+   - [x] Verified Stage 1–9 items against source and re-ran `tsc --noEmit` / `npm run lint` (2026-11-19); corrected over-claimed Stage 4 items and added pending lint/test gaps.
    - [ ] Work through the Definition of Done checklist (Section 4) once the above is complete.
+
+---
+
+## 2.1 Verification Log (2026-11-19)
+
+`git status` shows only the untracked `Gifts By VF/` reference project; no tracked source files were changed by this check. "PASS in code" means the implementation exists in the repository — it is not a live browser, crawler or deployment verification.
+
+| Check | Result |
+|---|---|
+| `npx tsc --noEmit` | **PASS** — 0 errors |
+| `npm run lint` | **FAIL** — 179 errors / 5,107 warnings (mostly untracked reference project + `.vercel` output) |
+| `npx eslint app components lib proxy.ts next.config.ts --quiet` | **FAIL** — 1 error in `components/admin/HelpCentre.tsx:49` |
+| Stage 2 env/schema/seed/admin account | **PASS in code** |
+| Stage 3 product/category/collection CRUD, `requireAdmin()`, activity log | **PASS in code** |
+| Stage 4 filters, search, sorting, pagination, product detail | **PASS in code** (collection filter, instant search, load-more and DB-backed legacy pages are missing) |
+| Stage 5 Supabase Storage upload, MIME/size limits, video detection, gallery, primary media | **PASS in code** (queue thumbnails and reordering are missing) |
+| Stage 6 WhatsApp URL/template/share, sitemap/robots/OG/Twitter/JSON-LD | **PASS in code** |
+| Stage 7 business settings editor + storefront wiring | **PASS in code** |
+| Stage 9 admin help centre, guides, deep links, nav entry, styling | **PASS in code** |
+| CMS editors + storefront reads for `WebsiteContent`, `Testimonial`, `Faq`, `NavigationItem`, `PromotionalBanner` | **NOT FOUND** — models and seed data only |
+| Upload-queue thumbnails, media reordering, login rate limiting, sanitization policy, accessibility/deployment audit records | **NOT FOUND** |
 
 ---
 

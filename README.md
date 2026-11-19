@@ -11,7 +11,7 @@ categories and the business details used for customer inquiries.
 - **TypeScript** + **Tailwind CSS v4**
 - **PostgreSQL (Supabase)** via **Prisma 6**
 - **NextAuth v5** (credentials + JWT sessions)
-- **Cloudinary** (optional media uploads)
+- **Supabase Storage** (optional media uploads)
 - **Zod** + **React Hook Form**
 
 ## Prerequisites
@@ -29,7 +29,7 @@ npm install
 copy .env.example .env        # Windows
 # cp .env.example .env        # macOS / Linux
 
-# 3. Add your Supabase connection strings to .env (see Environment below)
+# 3. Add your Supabase connection strings and Storage credentials to .env (see Environment below)
 
 # 4. Create the schema and load the demo catalogue
 npm run db:push
@@ -76,10 +76,20 @@ or mobile hotspot. For offline development, `docker-compose.yml` still provides
 a local PostgreSQL instance on port `5434` (`npm run db:up`); point both URLs at
 `localhost:5434` in that case.
 
-Cloudinary is optional locally. Image uploads return a clear configuration
-error until `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` and
-`CLOUDINARY_API_SECRET` are real values. External image and video URLs work
-without Cloudinary.
+Supabase Storage uploads are optional locally. Image and video uploads return a
+clear configuration error until `SUPABASE_URL` and
+`SUPABASE_SERVICE_ROLE_KEY` are real values and the public `product-media`
+bucket exists. External image and video URLs work without Storage credentials.
+
+Create the bucket by applying `supabase/migrations/20261119000000_create_product_media_bucket.sql`
+with the Supabase CLI (`supabase db push`) or by pasting it into **Supabase
+Dashboard → SQL Editor → New query**. The service role key is found under
+**Project Settings → API → Service role key**; keep it server-side only and
+never prefix it with `NEXT_PUBLIC_`. Set `SUPABASE_STORAGE_BUCKET` if you prefer
+a different bucket name. Set `SUPABASE_IMAGE_TRANSFORMATIONS="true"` only on
+Pro+ projects with image transformations enabled — it stores 400×400 thumbnail
+URLs for uploaded images. Supabase's Free plan has a 50 MB global file-size cap,
+so 100 MB videos need a Pro project (or a lower app limit).
 
 ## Scripts
 
@@ -120,6 +130,8 @@ lib/
 prisma/
   schema.prisma       Database models
   seed.ts             Idempotent demo data
+supabase/
+  migrations/         Supabase Storage bucket setup
 proxy.ts              Admin route protection (Next.js 16 proxy convention)
 ```
 
@@ -128,9 +140,12 @@ proxy.ts              Admin route protection (Next.js 16 proxy convention)
 - Run `prisma migrate deploy` (after creating migrations) or `npm run db:push`
   against the production database before the first build.
 - Set `DATABASE_URL`, `DIRECT_URL`, `AUTH_SECRET`, `NEXTAUTH_URL`,
-  `NEXT_PUBLIC_SITE_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` and the Cloudinary
-  credentials in the hosting environment. Use the Supabase pooled URLs shown
-  above. `ADMIN_PASSWORD` must be the password you want the admin to use; the
+  `NEXT_PUBLIC_SITE_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` and the Supabase
+  Storage credentials (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and
+  optionally `SUPABASE_STORAGE_BUCKET` / `SUPABASE_IMAGE_TRANSFORMATIONS`) in
+  the hosting environment. Use the
+  Supabase pooled URLs shown above and create the public media bucket before
+  enabling uploads. `ADMIN_PASSWORD` must be the password you want the admin to use; the
   value in `.env.example` is only a sample. Deployments made before the
   password-only sign-in fix ignore this variable, so redeploy the current code
   and then reset the stored hash with `npm run admin:password` if necessary.
@@ -147,6 +162,10 @@ proxy.ts              Admin route protection (Next.js 16 proxy convention)
 - **`Can't reach database server` (Docker)** — make sure Docker Desktop is
   running and `npm run db:up` reports the container as healthy. The host port
   is `5434`.
+- **`Supabase Storage is not configured`** — add `SUPABASE_URL` and
+  `SUPABASE_SERVICE_ROLE_KEY` to the environment the server actually loads and
+  restart it. If uploads fail with a bucket error, confirm the public
+  `product-media` bucket exists and that its MIME/size limits match the app.
 - **`Port 5434 is already allocated`** — another PostgreSQL container is using
   it. Stop it with `docker ps` / `docker stop <name>`, then run `npm run db:up`.
 - **`Prisma Client is not generated`** — run `npm run db:generate`, or simply

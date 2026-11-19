@@ -302,7 +302,7 @@ export const adminGuides: AdminGuide[] = [
       'photo',
       'video',
       'upload',
-      'cloudinary',
+      'supabase',
       'youtube',
       'vimeo',
       'alt text',
@@ -315,7 +315,7 @@ export const adminGuides: AdminGuide[] = [
       {
         title: 'Upload from your device',
         paragraphs: [
-          'Open the Media page to see the shared media library and use the uploader to drag and drop files or browse your device. Uploads show progress and a status message when they finish. Images are optimised automatically; the limits are 10 MB per image and 100 MB per video.',
+          'Open the Media page to see the shared media library and use the uploader to drag and drop files or browse your device. Uploads are stored in Supabase Storage and show progress and a status message when they finish. The limits are 10 MB per image and 100 MB per video.',
         ],
         href: '/admin/media',
         hrefLabel: 'Go to media library',
@@ -331,7 +331,7 @@ export const adminGuides: AdminGuide[] = [
       {
         title: 'Set the main image and descriptions',
         paragraphs: [
-          'Choose the Primary radio on the image customers should see first in the catalogue. Add alt text describing what the image shows and a caption if it adds helpful context. Save the product to apply the changes.',
+          'Choose the Primary radio on the image customers should see first in the catalogue. Add alt text describing what the image shows and a caption if it adds helpful context. For uploaded videos you can paste a poster image URL to show a preview before playback. Save the product to apply the changes.',
         ],
       },
       {

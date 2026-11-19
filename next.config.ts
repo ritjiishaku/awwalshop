@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       // Known media providers used by the seeded catalogue.
-      { protocol: 'https', hostname: 'res.cloudinary.com' },
+      { protocol: 'https', hostname: '**.supabase.co' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'img.youtube.com' },
       { protocol: 'https', hostname: 'i.ytimg.com' },

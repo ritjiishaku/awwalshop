@@ -5,11 +5,10 @@ import {
   ALLOWED_VIDEO_TYPES,
   MAX_IMAGE_SIZE,
   MAX_VIDEO_SIZE,
-  isCloudinaryConfigured,
-  uploadToCloudinary,
-} from '@/lib/cloudinary'
+  isSupabaseStorageConfigured,
+  uploadToSupabaseStorage,
+} from '@/lib/supabase-storage'
 
-export const runtime = 'nodejs'
 export const maxDuration = 60
 
 const imageTypes: readonly string[] = ALLOWED_IMAGE_TYPES
@@ -25,11 +24,11 @@ export async function POST(request: Request) {
     )
   }
 
-  if (!isCloudinaryConfigured()) {
+  if (!isSupabaseStorageConfigured()) {
     return NextResponse.json(
       {
         error:
-          'Cloudinary is not configured. Add CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET to your environment, then restart the server.',
+          'Supabase Storage is not configured. Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to your environment, create a public bucket named product-media, then restart the server.',
       },
       { status: 503 }
     )
@@ -83,9 +82,9 @@ export async function POST(request: Request) {
 
   try {
     const buffer = Buffer.from(await file.arrayBuffer())
-    const result = await uploadToCloudinary(buffer, {
-      folder: 'awwalshop/products',
-      resourceType: isImage ? 'image' : 'video',
+    const result = await uploadToSupabaseStorage(buffer, {
+      folder: 'products',
+      contentType: file.type,
     })
 
     return NextResponse.json({

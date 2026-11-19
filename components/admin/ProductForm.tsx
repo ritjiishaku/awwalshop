@@ -473,7 +473,7 @@ export default function ProductForm({
 
           <Section
             title="Media"
-            description="Upload files to Cloudinary or paste image, YouTube, Vimeo and MP4 URLs. The primary item is used as the catalogue thumbnail."
+            description="Upload files to Supabase Storage or paste image, YouTube, Vimeo and MP4 URLs. The primary item is used as the catalogue thumbnail."
           >
             <div className="space-y-4">
               <MediaUploader
@@ -532,6 +532,13 @@ export default function ProductForm({
                           <input className="input text-sm" placeholder="Alt text" {...register(`media.${index}.altText`)} />
                           <input className="input text-sm" placeholder="Caption (optional)" {...register(`media.${index}.caption`)} />
                         </div>
+                        {current?.mediaType === 'VIDEO' && (
+                          <input
+                            className="input text-sm"
+                            placeholder="Poster image URL (optional)"
+                            {...register(`media.${index}.thumbnailUrl`)}
+                          />
+                        )}
                         <div className="flex flex-wrap items-center gap-4 text-xs text-taupe">
                           <label className="flex items-center gap-1.5">
                             <input
