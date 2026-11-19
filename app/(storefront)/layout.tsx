@@ -6,6 +6,13 @@ import {
   getVisibleCategories,
 } from '@/lib/storefront'
 
+// This layout (and every storefront route beneath it) reads live catalogue,
+// category and business-settings data from Prisma. Rendering it at build time
+// would require the database to be reachable during `next build`, which is not
+// guaranteed (e.g. Vercel builds). Opt the whole storefront into request-time
+// rendering so the queries run with the runtime DATABASE_URL instead.
+export const dynamic = 'force-dynamic'
+
 const SOCIAL_LABELS: Record<string, string> = {
   instagram: 'Instagram',
   facebook: 'Facebook',

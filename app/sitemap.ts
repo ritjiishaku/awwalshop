@@ -1,6 +1,10 @@
 import type { MetadataRoute } from 'next'
 import { getSitemapData } from '@/lib/storefront'
 
+// The sitemap is built from live product/category data. Keep it out of static
+// generation so `next build` does not need a reachable database.
+export const dynamic = 'force-dynamic'
+
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') || 'http://localhost:3000'
 
